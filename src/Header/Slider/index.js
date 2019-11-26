@@ -1,5 +1,5 @@
 import React, {Children, PureComponent} from 'react';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import classNames from 'classnames';
 import styles from './Slider.scss';
 import transition from './transition.scss';
@@ -52,7 +52,7 @@ export default class Slider extends PureComponent {
         {index !== 0 &&
           <Arrow onClick={this.handleClick} direction={DIRECTIONS.LEFT} />
         }
-        <CSSTransitionGroup
+        <TransitionGroup
           className={styles.wrapper}
           component='div'
           style={{
@@ -71,7 +71,7 @@ export default class Slider extends PureComponent {
               {child}
             </div>
           ))}
-        </CSSTransitionGroup>
+        </TransitionGroup>
         {index !== children.length - 1 &&
           <Arrow onClick={this.handleClick} direction={DIRECTIONS.RIGHT} />
         }

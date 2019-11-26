@@ -23,6 +23,7 @@ export default class Today extends PureComponent {
 
   render() {
     let {todayLabel, show, theme} = this.props;
+    const node = React.createRef();
     return (
       <div
         className={classNames(styles.root, {
@@ -35,7 +36,7 @@ export default class Today extends PureComponent {
           color: theme.floatingNav.color,
         }}
         onClick={this.scrollToToday}
-        ref="node"
+        ref={node}
       >
         {todayLabel}
         <svg

@@ -1,5 +1,6 @@
 import React from 'react';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import classNames from 'classnames';
 import parse from 'date-fns/parse';
 import format from 'date-fns/format';
@@ -56,26 +57,28 @@ export default function defaultSelectionRenderer(value, {
           <div
             key={item}
             className={classNames(styles.dateWrapper, styles[item], {
-              [styles.active]: active,
+              [styles.active]: active
             })}
             title={title}
           >
-            <CSSTransitionGroup
-              transitionName={animation}
-              transitionEnterTimeout={250}
-              transitionLeaveTimeout={250}
-              transitionEnter={shouldAnimate}
-              transitionLeave={shouldAnimate}
-            >
-              <span
+            <TransitionGroup>
+              <CSSTransition
                 key={`${item}-${value}`}
-                className={styles.date}
-                aria-hidden={true}
-                onClick={handleClick}
+                classNames={animation}
+                timeout={{ enter: 250, exit: 250}}
+                enter={shouldAnimate}
+                exit={shouldAnimate}
               >
-                {value}
-              </span>
-            </CSSTransitionGroup>
+                <span
+                  key={`${item}-${value}`}
+                  className={styles.date}
+                  aria-hidden={true}
+                  onClick={handleClick}
+                >
+                  {value}
+                </span>
+              </CSSTransition>
+            </TransitionGroup>
           </div>
         );
       })}
