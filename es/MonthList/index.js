@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import VirtualList from 'react-tiny-virtual-list';
 import classNames from 'classnames';
-import { emptyFn, getMonth, getWeek, getWeeksInMonth, animate } from '../utils';
+import { emptyFn, getMonth, getWeek, hasSelectedDay, getWeeksInMonth, animate } from '../utils';
 import parse from 'date-fns/parse';
 import startOfMonth from 'date-fns/start_of_month';
 import Month from '../Month';
@@ -19,6 +19,7 @@ var styles = {
   'scrolling': 'Cal__MonthList__scrolling'
 };
 
+import forceUpdateContext from '../utils/contexts';
 
 var AVERAGE_ROWS_PER_MONTH = 5;
 
@@ -34,8 +35,12 @@ var MonthList = function (_Component) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.state = {
-      scrollTop: _this.getDateOffset(_this.props.scrollDate)
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.doForceUpdate = function () {
+      _this.setState({ forceUpdate: true });
+    }, _this.state = {
+      scrollTop: _this.getDateOffset(_this.props.scrollDate),
+      forceUpdate: false,
+      doForceUpdate: _this.doForceUpdate
     }, _this.cache = {}, _this.memoize = function (param) {
       if (!this.cache[param]) {
         var weekStartsOn = this.props.locale.weekStartsOn;
@@ -61,7 +66,12 @@ var MonthList = function (_Component) {
             year = _months$index.year;
 
         var weeks = getWeeksInMonth(month, year, weekStartsOn, index === months.length - 1);
+        var isDaySelected = hasSelectedDay(year, month, _this.props.selected, weekStartsOn);
         var height = weeks * rowHeight;
+        if (isDaySelected) {
+          // @TODO make the height of the time row dynamic
+          height = weeks * rowHeight + 71;
+        }
         _this.monthHeights[index] = height;
       }
 
@@ -161,6 +171,14 @@ var MonthList = function (_Component) {
     this.scrollEl = this.VirtualList.rootNode;
   };
 
+  MonthList.prototype.componentDidUpdate = function componentDidUpdate(prevProps, prevState) {
+    if (this.state.forceUpdate === true) {
+      this.VirtualList.recomputeSizes(0);
+      this.monthHeights = [];
+      this.setState({ forceUpdate: false });
+    }
+  };
+
   MonthList.prototype.UNSAFE_componentWillReceiveProps = function UNSAFE_componentWillReceiveProps(_ref2) {
     var scrollDate = _ref2.scrollDate;
 
@@ -197,20 +215,24 @@ var MonthList = function (_Component) {
     var scrollTop = this.state.scrollTop;
 
 
-    return React.createElement(VirtualList, {
-      ref: this._getRef,
-      width: width,
-      height: height,
-      itemCount: months.length,
-      itemSize: this.getMonthHeight,
-      estimatedItemSize: rowHeight * AVERAGE_ROWS_PER_MONTH,
-      renderItem: this.renderMonth,
-      onScroll: onScroll,
-      scrollOffset: scrollTop,
-      className: classNames(styles.root, (_classNames = {}, _classNames[styles.scrolling] = isScrolling, _classNames)),
-      style: { lineHeight: rowHeight + 'px' },
-      overscanCount: overscanMonthCount
-    });
+    return React.createElement(
+      forceUpdateContext.Provider,
+      { value: this.state },
+      React.createElement(VirtualList, {
+        ref: this._getRef,
+        width: width,
+        height: height,
+        itemCount: months.length,
+        itemSize: this.getMonthHeight,
+        estimatedItemSize: rowHeight * AVERAGE_ROWS_PER_MONTH,
+        renderItem: this.renderMonth,
+        onScroll: onScroll,
+        scrollOffset: scrollTop,
+        className: classNames(styles.root, (_classNames = {}, _classNames[styles.scrolling] = isScrolling, _classNames)),
+        style: { lineHeight: rowHeight + 'px' },
+        overscanCount: overscanMonthCount
+      })
+    );
   };
 
   return MonthList;

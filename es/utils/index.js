@@ -24,6 +24,18 @@ export var keyCodes = {
   up: 38
 };
 
+export function hasSelectedDay(year, month, selectedDate, weekStartsOn) {
+  var test = getMonth(year, month, weekStartsOn);
+
+  var selectedMonth = new Date(selectedDate).getMonth();
+  var selectedYear = new Date(selectedDate).getFullYear();
+  if (year === selectedYear && month === selectedMonth) {
+    return true;
+  }
+
+  return false;
+}
+
 /**
  * Given a year and a month, returns the rows for that month to be iterated over
  * @param {Number} year - the year number

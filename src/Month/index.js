@@ -1,10 +1,13 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Fragment} from 'react';
+import CSSTransition from "react-transition-group/CSSTransition";
 import classNames from 'classnames';
-import {getDateString} from '../utils';
+import {getDateString, weekHasSelectedDay} from '../utils';
 import format from 'date-fns/format';
 import getDay from 'date-fns/get_day';
 import isSameYear from 'date-fns/is_same_year';
+import Time from '../Time/index';
 import styles from './Month.scss';
+import animation from "./TimeAnimation.scss";
 
 export default class Month extends PureComponent {
   renderRows() {
@@ -38,6 +41,10 @@ export default class Month extends PureComponent {
     const _minDate = format(minDate, 'YYYY-MM-DD');
     const _maxDate = format(maxDate, 'YYYY-MM-DD');
 
+    const selectedDayWeeks = weekHasSelectedDay(year, month, selected, locale.weekStartsOn);
+    console.log(year, month, selected);
+    console.log(selectedDayWeeks);
+
 		// Oh the things we do in the name of performance...
     for (let i = 0, len = rows.length; i < len; i++) {
       row = rows[i];
@@ -55,7 +62,7 @@ export default class Month extends PureComponent {
 					maxDate && date > _maxDate ||
 					disabledDays && disabledDays.length && disabledDays.indexOf(dow) !== -1 ||
 					disabledDates && disabledDates.length && disabledDates.indexOf(date) !== -1
-				);
+        );
 
         days[k] = (
 					<DayComponent
@@ -77,16 +84,29 @@ export default class Month extends PureComponent {
 
         dow += 1;
       }
+      const hasSelectedDay = (selectedDayWeeks[i] !== undefined && selectedDayWeeks[i] === true) ? true : false;
       monthRows[i] = (
-        <ul
-          key={`Row-${i}`}
-          className={classNames(styles.row, {[styles.partial]: row.length !== 7})}
-          style={{height: rowHeight}}
-          role="row"
-          aria-label={`Week ${i + 1}`}
-        >
-          {days}
-        </ul>
+        <Fragment key={`month-row-fragment-${i}`}>
+          <ul
+            key={`Row-${i}`}
+            className={classNames(styles.row, {
+              [styles.partial]: row.length !== 7
+            })}
+            style={{ height: rowHeight }}
+            role="row"
+            aria-label={`Week ${i + 1}`}
+          >
+            {days}
+          </ul>
+          <CSSTransition
+            key={`select-time-transition`}
+            classNames={{ ...animation }}
+            timeout={{ enter: 250, exit: 250 }}
+            in={hasSelectedDay}
+          >
+            <Time hasSelectedDay={hasSelectedDay} />
+          </CSSTransition>
+        </Fragment>
       );
 
     }

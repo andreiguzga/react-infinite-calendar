@@ -20,6 +20,52 @@ export const keyCodes = {
   up: 38,
 };
 
+export function monthHasSelectedDay(year, month, selectedDate, weekStartsOn) {
+  const weeks = weekHasSelectedDay(year, month, selectedDate, weekStartsOn);
+  
+  if (weeks.length !== 0) {
+    for (let i = 0, len = weeks.length; i < len; i++) {
+      if (weeks[i] === true) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+export function weekHasSelectedDay(year, month, selectedDate, weekStartsOn) {
+  const result = [];
+  const monthInfo = getMonth(year, month, weekStartsOn);
+  const weeks = monthInfo.rows;
+  let selectedMonth = new Date(selectedDate).getMonth();
+  let selectedYear = new Date(selectedDate).getFullYear();
+  let selectedDay = new Date(selectedDate).getDate();
+  const prevMonth = (month === 0) ? 11 : month - 1;
+
+  if (year === selectedYear && month === selectedMonth) {
+    for (let i = 0, len = weeks.length; i < len; i++) {
+      let week = weeks[i];
+      if (week.indexOf(selectedDay) !== -1) {
+        if ((i + 1) === len && week.length !== 7) {
+          result[i] = false;
+        } else {
+          result[i] = true;
+        }
+      }
+    }
+  } else if ((year === selectedYear || (year - 1 === selectedYear && selectedMonth === 11)) && prevMonth === selectedMonth) {
+    const monthInfo = getMonth(year, prevMonth, weekStartsOn);
+    const weeks = monthInfo.rows;
+    const lastWeek = weeks.pop();
+    if (lastWeek.indexOf(selectedDay) !== -1 && lastWeek.length !== 7) {
+      result[0] = true;
+    }
+  }
+
+  return result;
+}
+
 /**
  * Given a year and a month, returns the rows for that month to be iterated over
  * @param {Number} year - the year number

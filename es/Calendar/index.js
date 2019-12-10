@@ -382,7 +382,8 @@ var Calendar = function (_Component) {
             selected: selected,
             scrollDate: scrollDate,
             showOverlay: showOverlay,
-            width: width
+            width: width,
+            forceUpdate: true
           })
         ),
         display === 'years' && React.createElement(YearsComponent, _extends({

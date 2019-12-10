@@ -21,10 +21,11 @@ export default class DefaultCalendar extends Component {
     selected: typeof this.props.selected !== 'undefined'
       ? this.props.selected
       : new Date(),
+    forceUpdate: false
   };
   UNSAFE_componentWillReceiveProps({selected}) {
     if (selected !== this.props.selected) {
-      this.setState({selected});
+      this.setState({selected, forceUpdate: true});
     }
   }
   handleSelect = (selected) => {
@@ -32,7 +33,7 @@ export default class DefaultCalendar extends Component {
 
     if (typeof onSelect === 'function') { onSelect(selected); }
 
-    this.setState({selected: interpolateSelection(selected, this.state.selected)});
+    this.setState({selected: interpolateSelection(selected, this.state.selected), forceUpdate: true});
   }
   render() {
     // eslint-disable-next-line no-unused-vars

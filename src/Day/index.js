@@ -1,14 +1,19 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, useState} from 'react';
 import classNames from 'classnames';
 import parse from 'date-fns/parse';
 import styles from './Day.scss';
+import forceUpdateContext from '../utils/contexts';
 
 export default class Day extends PureComponent {
-  handleClick = () => {
+  handleClick = (cb) => {
     let {date, isDisabled, onClick} = this.props;
 
     if (!isDisabled && typeof onClick === 'function') {
       onClick(parse(date));
+    }
+
+    if (cb !== undefined && typeof cb === 'function') {
+      cb();
     }
   };
 
@@ -67,26 +72,30 @@ export default class Day extends PureComponent {
     }
 
     return (
-      <li
-        style={color ? {color} : null}
-        className={classNames(styles.root, {
-          [styles.today]: isToday,
-          [styles.highlighted]: isHighlighted,
-          [styles.selected]: isSelected,
-          [styles.disabled]: isDisabled,
-          [styles.enabled]: !isDisabled,
-        }, className)}
-        onClick={this.handleClick}
-        data-date={date}
-        {...handlers}
-      >
-        {day === 1 && <span className={styles.month}>{monthShort}</span>}
-        {isToday ? <span>{day}</span> : day}
-        {day === 1 &&
-          currentYear !== year &&
-          <span className={styles.year}>{year}</span>}
-        {isSelected && this.renderSelection()}
-      </li>
+      <forceUpdateContext.Consumer>
+        {({doForceUpdate}) => (
+          <li
+            style={color ? {color} : null}
+            className={classNames(styles.root, {
+              [styles.today]: isToday,
+              [styles.highlighted]: isHighlighted,
+              [styles.selected]: isSelected,
+              [styles.disabled]: isDisabled,
+              [styles.enabled]: !isDisabled,
+            }, className)}
+            onClick={() => { this.handleClick(doForceUpdate); }}
+            data-date={date}
+            {...handlers}
+          >
+            {day === 1 && <span className={styles.month}>{monthShort}</span>}
+            {isToday ? <span>{day}</span> : day}
+            {day === 1 &&
+              currentYear !== year &&
+              <span className={styles.year}>{year}</span>}
+            {isSelected && this.renderSelection()}
+          </li>
+        )}
+      </forceUpdateContext.Consumer>
     );
   }
 }

@@ -37,7 +37,8 @@ var DefaultCalendar = (_temp2 = _class = function (_Component) {
     }
 
     return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.state = {
-      selected: typeof _this.props.selected !== 'undefined' ? _this.props.selected : new Date()
+      selected: typeof _this.props.selected !== 'undefined' ? _this.props.selected : new Date(),
+      forceUpdate: false
     }, _this.handleSelect = function (selected) {
       var _this$props = _this.props,
           onSelect = _this$props.onSelect,
@@ -48,7 +49,7 @@ var DefaultCalendar = (_temp2 = _class = function (_Component) {
         onSelect(selected);
       }
 
-      _this.setState({ selected: interpolateSelection(selected, _this.state.selected) });
+      _this.setState({ selected: interpolateSelection(selected, _this.state.selected), forceUpdate: true });
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
@@ -56,7 +57,7 @@ var DefaultCalendar = (_temp2 = _class = function (_Component) {
     var selected = _ref.selected;
 
     if (selected !== this.props.selected) {
-      this.setState({ selected: selected });
+      this.setState({ selected: selected, forceUpdate: true });
     }
   };
 

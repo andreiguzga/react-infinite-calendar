@@ -363,6 +363,7 @@ export default class Calendar extends Component {
               scrollDate={scrollDate}
               showOverlay={showOverlay}
               width={width}
+              forceUpdate={true}
             />
           </div>
           {display === 'years' &&

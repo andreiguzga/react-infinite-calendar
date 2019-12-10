@@ -1,0 +1,27 @@
+.root {
+  width: 100% !important;
+  background-color: #FFF;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  &.scrolling {
+    > div {
+      pointer-events: none;
+    }
+
+    label {
+      opacity: 1;
+    }
+  }
+}
+
+.timeItem {
+  background-color: rgb(85, 159, 255);
+  color: #fff;
+  padding: 10px;
+  margin: 10px 5px;
+  border-radius: 20px;
+  cursor: pointer;
+}

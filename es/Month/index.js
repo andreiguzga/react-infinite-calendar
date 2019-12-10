@@ -6,18 +6,26 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
+import CSSTransition from "react-transition-group/CSSTransition";
 import classNames from 'classnames';
 import { getDateString } from '../utils';
 import format from 'date-fns/format';
 import getDay from 'date-fns/get_day';
 import isSameYear from 'date-fns/is_same_year';
+import Time from '../Time/index';
 var styles = {
   'rows': 'Cal__Month__rows',
   'row': 'Cal__Month__row',
   'partial': 'Cal__Month__partial',
   'label': 'Cal__Month__label',
   'partialFirstRow': 'Cal__Month__partialFirstRow'
+};
+var animation = {
+  'enter': 'Cal__TimeAnimation__enter',
+  'enterActive': 'Cal__TimeAnimation__enterActive',
+  'exit': 'Cal__TimeAnimation__exit',
+  'exitActive': 'Cal__TimeAnimation__exitActive'
 };
 
 var Month = function (_PureComponent) {
@@ -70,6 +78,7 @@ var Month = function (_PureComponent) {
       row = rows[i];
       days = [];
       dow = getDay(new Date(year, month, row[0]));
+      var hasSelectedDay = false;
 
       for (var k = 0, _len = row.length; k < _len; k++) {
         day = row[k];
@@ -78,6 +87,10 @@ var Month = function (_PureComponent) {
         isToday = date === _today;
 
         isDisabled = minDate && date < _minDate || maxDate && date > _maxDate || disabledDays && disabledDays.length && disabledDays.indexOf(dow) !== -1 || disabledDates && disabledDates.length && disabledDates.indexOf(date) !== -1;
+
+        if (hasSelectedDay === false) {
+          hasSelectedDay = date === selected ? true : false;
+        }
 
         days[k] = React.createElement(DayComponent, _extends({
           key: 'day-' + day,
@@ -97,15 +110,29 @@ var Month = function (_PureComponent) {
         dow += 1;
       }
       monthRows[i] = React.createElement(
-        'ul',
-        {
-          key: 'Row-' + i,
-          className: classNames(styles.row, (_classNames = {}, _classNames[styles.partial] = row.length !== 7, _classNames)),
-          style: { height: rowHeight },
-          role: 'row',
-          'aria-label': 'Week ' + (i + 1)
-        },
-        days
+        Fragment,
+        { key: 'month-row-fragment-' + i },
+        React.createElement(
+          'ul',
+          {
+            key: 'Row-' + i,
+            className: classNames(styles.row, (_classNames = {}, _classNames[styles.partial] = row.length !== 7, _classNames)),
+            style: { height: rowHeight },
+            role: 'row',
+            'aria-label': 'Week ' + (i + 1)
+          },
+          days
+        ),
+        React.createElement(
+          CSSTransition,
+          {
+            key: 'select-time-transition',
+            classNames: _extends({}, animation),
+            timeout: { enter: 250, exit: 250 },
+            'in': hasSelectedDay
+          },
+          React.createElement(Time, { hasSelectedDay: hasSelectedDay })
+        )
       );
     }
 

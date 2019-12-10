@@ -6,13 +6,15 @@ import {
   emptyFn,
   getMonth,
   getWeek,
+  monthHasSelectedDay,
   getWeeksInMonth,
-  animate,
-} from '../utils';
+  animate
+} from "../utils";
 import parse from 'date-fns/parse';
 import startOfMonth from 'date-fns/start_of_month';
 import Month from '../Month';
 import styles from './MonthList.scss';
+import forceUpdateContext from '../utils/contexts';
 
 const AVERAGE_ROWS_PER_MONTH = 5;
 
@@ -37,8 +39,13 @@ export default class MonthList extends Component {
     today: PropTypes.instanceOf(Date),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
+  doForceUpdate = () => {
+    this.setState({forceUpdate: true});
+  }
   state = {
     scrollTop: this.getDateOffset(this.props.scrollDate),
+    forceUpdate: false,
+    doForceUpdate: this.doForceUpdate
   };
   cache = {};
   memoize = function(param) {
@@ -59,7 +66,17 @@ export default class MonthList extends Component {
       let {locale: {weekStartsOn}, months, rowHeight} = this.props;
       let {month, year} = months[index];
       let weeks = getWeeksInMonth(month, year, weekStartsOn, index === months.length - 1);
+      let hasDaySelected = monthHasSelectedDay(
+        year,
+        month,
+        this.props.selected,
+        weekStartsOn
+      );
       let height = weeks * rowHeight;
+      if (hasDaySelected) {
+        // @TODO make the height of the time row dynamic
+        height = weeks * rowHeight + 71;
+      }
       this.monthHeights[index] = height;
     }
 
@@ -68,6 +85,14 @@ export default class MonthList extends Component {
 
   componentDidMount() {
     this.scrollEl = this.VirtualList.rootNode;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.forceUpdate === true) {
+      this.VirtualList.recomputeSizes(0);
+      this.monthHeights = [];
+      this.setState({forceUpdate: false});
+    }
   }
 
   UNSAFE_componentWillReceiveProps({scrollDate}) {
@@ -174,20 +199,22 @@ export default class MonthList extends Component {
     const {scrollTop} = this.state;
 
     return (
-      <VirtualList
-        ref={this._getRef}
-        width={width}
-        height={height}
-        itemCount={months.length}
-        itemSize={this.getMonthHeight}
-        estimatedItemSize={rowHeight * AVERAGE_ROWS_PER_MONTH}
-        renderItem={this.renderMonth}
-        onScroll={onScroll}
-        scrollOffset={scrollTop}
-        className={classNames(styles.root, {[styles.scrolling]: isScrolling})}
-        style={{lineHeight: `${rowHeight}px`}}
-        overscanCount={overscanMonthCount}
-      />
+      <forceUpdateContext.Provider value={this.state}>
+        <VirtualList
+          ref={this._getRef}
+          width={width}
+          height={height}
+          itemCount={months.length}
+          itemSize={this.getMonthHeight}
+          estimatedItemSize={rowHeight * AVERAGE_ROWS_PER_MONTH}
+          renderItem={this.renderMonth}
+          onScroll={onScroll}
+          scrollOffset={scrollTop}
+          className={classNames(styles.root, {[styles.scrolling]: isScrolling})}
+          style={{lineHeight: `${rowHeight}px`}}
+          overscanCount={overscanMonthCount}
+        />
+      </forceUpdateContext.Provider>
     );
   }
 }

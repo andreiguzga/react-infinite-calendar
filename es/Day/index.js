@@ -6,7 +6,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState } from 'react';
 import classNames from 'classnames';
 import parse from 'date-fns/parse';
 var styles = {
@@ -26,6 +26,8 @@ var styles = {
   'betweenRange': 'Cal__Day__betweenRange'
 };
 
+import forceUpdateContext from '../utils/contexts';
+
 var Day = function (_PureComponent) {
   _inherits(Day, _PureComponent);
 
@@ -38,7 +40,7 @@ var Day = function (_PureComponent) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _PureComponent.call.apply(_PureComponent, [this].concat(args))), _this), _this.handleClick = function () {
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _PureComponent.call.apply(_PureComponent, [this].concat(args))), _this), _this.handleClick = function (cb) {
       var _this$props = _this.props,
           date = _this$props.date,
           isDisabled = _this$props.isDisabled,
@@ -47,6 +49,10 @@ var Day = function (_PureComponent) {
 
       if (!isDisabled && typeof onClick === 'function') {
         onClick(parse(date));
+      }
+
+      if (cb !== undefined && typeof cb === 'function') {
+        cb();
       }
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
@@ -86,7 +92,7 @@ var Day = function (_PureComponent) {
   };
 
   Day.prototype.render = function render() {
-    var _classNames;
+    var _this2 = this;
 
     var _props2 = this.props,
         className = _props2.className,
@@ -113,29 +119,40 @@ var Day = function (_PureComponent) {
     }
 
     return React.createElement(
-      'li',
-      _extends({
-        style: color ? { color: color } : null,
-        className: classNames(styles.root, (_classNames = {}, _classNames[styles.today] = isToday, _classNames[styles.highlighted] = isHighlighted, _classNames[styles.selected] = isSelected, _classNames[styles.disabled] = isDisabled, _classNames[styles.enabled] = !isDisabled, _classNames), className),
-        onClick: this.handleClick,
-        'data-date': date
-      }, handlers),
-      day === 1 && React.createElement(
-        'span',
-        { className: styles.month },
-        monthShort
-      ),
-      isToday ? React.createElement(
-        'span',
-        null,
-        day
-      ) : day,
-      day === 1 && currentYear !== year && React.createElement(
-        'span',
-        { className: styles.year },
-        year
-      ),
-      isSelected && this.renderSelection()
+      forceUpdateContext.Consumer,
+      null,
+      function (_ref) {
+        var _classNames;
+
+        var doForceUpdate = _ref.doForceUpdate;
+        return React.createElement(
+          'li',
+          _extends({
+            style: color ? { color: color } : null,
+            className: classNames(styles.root, (_classNames = {}, _classNames[styles.today] = isToday, _classNames[styles.highlighted] = isHighlighted, _classNames[styles.selected] = isSelected, _classNames[styles.disabled] = isDisabled, _classNames[styles.enabled] = !isDisabled, _classNames), className),
+            onClick: function onClick() {
+              _this2.handleClick(doForceUpdate);
+            },
+            'data-date': date
+          }, handlers),
+          day === 1 && React.createElement(
+            'span',
+            { className: styles.month },
+            monthShort
+          ),
+          isToday ? React.createElement(
+            'span',
+            null,
+            day
+          ) : day,
+          day === 1 && currentYear !== year && React.createElement(
+            'span',
+            { className: styles.year },
+            year
+          ),
+          isSelected && _this2.renderSelection()
+        );
+      }
     );
   };
 
