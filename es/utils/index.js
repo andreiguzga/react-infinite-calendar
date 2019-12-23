@@ -24,16 +24,50 @@ export var keyCodes = {
   up: 38
 };
 
-export function hasSelectedDay(year, month, selectedDate, weekStartsOn) {
-  var test = getMonth(year, month, weekStartsOn);
+export function monthHasSelectedDay(year, month, selectedDate, weekStartsOn) {
+  var weeks = weekHasSelectedDay(year, month, selectedDate, weekStartsOn);
 
-  var selectedMonth = new Date(selectedDate).getMonth();
-  var selectedYear = new Date(selectedDate).getFullYear();
-  if (year === selectedYear && month === selectedMonth) {
-    return true;
+  if (weeks.length !== 0) {
+    for (var i = 0, len = weeks.length; i < len; i++) {
+      if (weeks[i] === true) {
+        return true;
+      }
+    }
   }
 
   return false;
+}
+
+export function weekHasSelectedDay(year, month, selectedDate, weekStartsOn) {
+  var result = [];
+  var monthInfo = getMonth(year, month, weekStartsOn);
+  var weeks = monthInfo.rows;
+  var selectedMonth = new Date(selectedDate).getMonth();
+  var selectedYear = new Date(selectedDate).getFullYear();
+  var selectedDay = new Date(selectedDate).getDate();
+  var prevMonth = month === 0 ? 11 : month - 1;
+
+  if (year === selectedYear && month === selectedMonth) {
+    for (var i = 0, len = weeks.length; i < len; i++) {
+      var week = weeks[i];
+      if (week.indexOf(selectedDay) !== -1) {
+        if (i + 1 === len && week.length !== 7) {
+          result[i] = false;
+        } else {
+          result[i] = true;
+        }
+      }
+    }
+  } else if ((year === selectedYear || year - 1 === selectedYear && selectedMonth === 11) && prevMonth === selectedMonth) {
+    var _monthInfo = getMonth(year - 1, prevMonth, weekStartsOn);
+    var _weeks = _monthInfo.rows;
+    var lastWeek = _weeks.pop();
+    if (lastWeek.indexOf(selectedDay) !== -1 && lastWeek.length !== 7) {
+      result[0] = true;
+    }
+  }
+
+  return result;
 }
 
 /**

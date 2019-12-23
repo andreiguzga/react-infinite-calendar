@@ -55,7 +55,7 @@ export function weekHasSelectedDay(year, month, selectedDate, weekStartsOn) {
       }
     }
   } else if ((year === selectedYear || (year - 1 === selectedYear && selectedMonth === 11)) && prevMonth === selectedMonth) {
-    const monthInfo = getMonth(year, prevMonth, weekStartsOn);
+    const monthInfo = getMonth(year - 1, prevMonth, weekStartsOn);
     const weeks = monthInfo.rows;
     const lastWeek = weeks.pop();
     if (lastWeek.indexOf(selectedDay) !== -1 && lastWeek.length !== 7) {

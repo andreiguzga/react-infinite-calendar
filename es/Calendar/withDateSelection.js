@@ -38,12 +38,17 @@ var withDateSelection = _compose(withDefaultProps, withImmutableProps(function (
 }), _withProps(function (_ref3) {
   var _onSelect = _ref3.onSelect,
       setScrollDate = _ref3.setScrollDate,
-      props = _objectWithoutProperties(_ref3, ['onSelect', 'setScrollDate']);
+      onMonthLoaded = _ref3.onMonthLoaded,
+      availableTimes = _ref3.availableTimes,
+      props = _objectWithoutProperties(_ref3, ['onSelect', 'setScrollDate', 'onMonthLoaded', 'availableTimes']);
 
   var selected = sanitizeDate(props.selected, props);
 
   return {
     passThrough: {
+      Time: {
+        availableTimes: availableTimes
+      },
       Day: {
         onClick: _onSelect
       },
@@ -51,9 +56,12 @@ var withDateSelection = _compose(withDefaultProps, withImmutableProps(function (
         onSelect: function onSelect(year) {
           return handleYearSelect(year, { onSelect: _onSelect, selected: selected, setScrollDate: setScrollDate });
         }
+      },
+      Month: {
+        onMonthLoaded: onMonthLoaded
       }
     },
-    selected: selected && format(selected, 'YYYY-MM-DD')
+    selected: selected && format(selected, "YYYY-MM-DD")
   };
 }));
 

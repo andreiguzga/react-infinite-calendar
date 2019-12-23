@@ -67,6 +67,9 @@ export var withDefaultProps = _defaultProps({
   onScroll: emptyFn,
   onScrollEnd: emptyFn,
   onSelect: emptyFn,
+  onMonthLoaded: emptyFn,
+  withTimes: true,
+  availableTimes: [],
   passThrough: {},
   rowHeight: 56,
   tabIndex: 1,
@@ -299,6 +302,7 @@ var Calendar = function (_Component) {
         selected = _props2.selected,
         tabIndex = _props2.tabIndex,
         width = _props2.width,
+        withTimes = _props2.withTimes,
         YearsComponent = _props2.YearsComponent;
 
     var _getDisplayOptions = this.getDisplayOptions(),
@@ -383,7 +387,7 @@ var Calendar = function (_Component) {
             scrollDate: scrollDate,
             showOverlay: showOverlay,
             width: width,
-            forceUpdate: true
+            withTimes: withTimes
           })
         ),
         display === 'years' && React.createElement(YearsComponent, _extends({
@@ -452,6 +456,9 @@ Calendar.propTypes = process.env.NODE_ENV !== "production" ? {
   onScroll: PropTypes.func,
   onScrollEnd: PropTypes.func,
   onSelect: PropTypes.func,
+  onMonthLoad: PropTypes.func,
+  withTimes: PropTypes.bool,
+  availableTimes: PropTypes.arrayOf(PropTypes.string),
   rowHeight: PropTypes.number,
   tabIndex: PropTypes.number,
   theme: PropTypes.shape({

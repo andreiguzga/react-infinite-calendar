@@ -37,6 +37,9 @@ export const withDefaultProps = defaultProps({
   onScroll: emptyFn,
   onScrollEnd: emptyFn,
   onSelect: emptyFn,
+  onMonthLoaded: emptyFn,
+  withTimes: true,
+  availableTimes: [],
   passThrough: {},
   rowHeight: 56,
   tabIndex: 1,
@@ -92,6 +95,9 @@ export default class Calendar extends Component {
     onScroll: PropTypes.func,
     onScrollEnd: PropTypes.func,
     onSelect: PropTypes.func,
+    onMonthLoad: PropTypes.func,
+    withTimes: PropTypes.bool,
+    availableTimes: PropTypes.arrayOf(PropTypes.string),
     rowHeight: PropTypes.number,
     tabIndex: PropTypes.number,
     theme: PropTypes.shape({
@@ -277,7 +283,8 @@ export default class Calendar extends Component {
       scrollDate,
       selected,
 			tabIndex,
-			width,
+      width,
+      withTimes,
       YearsComponent,
 		} = this.props;
     const {
@@ -363,7 +370,7 @@ export default class Calendar extends Component {
               scrollDate={scrollDate}
               showOverlay={showOverlay}
               width={width}
-              forceUpdate={true}
+              withTimes={withTimes}
             />
           </div>
           {display === 'years' &&

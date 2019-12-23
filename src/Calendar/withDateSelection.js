@@ -30,19 +30,26 @@ export const withDateSelection = compose(
     YearsComponent: enhanceYear(YearsComponent),
   })),
   withState('scrollDate', 'setScrollDate', props => props.selected || new Date()),
-  withProps(({onSelect, setScrollDate, ...props}) => {
+  withProps(({onSelect, setScrollDate, onMonthLoaded, availableTimes, ...props}) => {
     const selected = sanitizeDate(props.selected, props);
 
     return {
       passThrough: {
+        Time: {
+          availableTimes: availableTimes
+        },
         Day: {
-          onClick: onSelect,
+          onClick: onSelect
         },
         Years: {
-          onSelect: (year) => handleYearSelect(year, {onSelect, selected, setScrollDate}),
+          onSelect: year =>
+            handleYearSelect(year, { onSelect, selected, setScrollDate })
         },
+        Month: {
+          onMonthLoaded: onMonthLoaded
+        }
       },
-      selected: selected && format(selected, 'YYYY-MM-DD'),
+      selected: selected && format(selected, "YYYY-MM-DD")
     };
   }),
 );

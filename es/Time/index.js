@@ -4,21 +4,45 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-import React, { PureComponent, Fragment } from "react";
+import React, { Component, Fragment } from "react";
 var styles = {
   "root": "Cal__Time__root",
   "scrolling": "Cal__Time__scrolling",
   "timeItem": "Cal__Time__timeItem"
 };
 
-var Time = function (_PureComponent) {
-  _inherits(Time, _PureComponent);
+var Time = function (_Component) {
+  _inherits(Time, _Component);
 
-  function Time() {
+  function Time(props) {
     _classCallCheck(this, Time);
 
-    return _possibleConstructorReturn(this, _PureComponent.apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+
+    _this.state = {
+      availableTimes: props.availableTimes
+    };
+    return _this;
   }
+
+  Time.prototype.renderTimes = function renderTimes() {
+    var timeRows = [];
+    var availableTimes = this.state.availableTimes;
+
+
+    if (availableTimes.length > 0) {
+      for (var i = 0, len = availableTimes.length; i < len; i++) {
+        var time = availableTimes[i];
+        timeRows[i] = React.createElement(
+          "span",
+          { key: "time-" + i, className: styles.timeItem },
+          time
+        );
+      }
+    }
+
+    return timeRows;
+  };
 
   Time.prototype.render = function render() {
     var hasSelectedDay = this.props.hasSelectedDay;
@@ -27,95 +51,11 @@ var Time = function (_PureComponent) {
     return hasSelectedDay && React.createElement(
       "div",
       { className: styles.root, key: "select-time" },
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "07:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "08:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "09:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "10:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "11:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "12:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "13:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "14:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "15:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "16:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "17:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "18:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "19:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "20:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "21:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "22:00"
-      ),
-      React.createElement(
-        "span",
-        { className: styles.timeItem },
-        "23:00"
-      )
+      this.renderTimes()
     );
   };
 
   return Time;
-}(PureComponent);
+}(Component);
 
 export { Time as default };

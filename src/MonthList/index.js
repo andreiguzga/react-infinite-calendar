@@ -38,6 +38,7 @@ export default class MonthList extends Component {
     theme: PropTypes.object,
     today: PropTypes.instanceOf(Date),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    withTimes: PropTypes.bool
   };
   doForceUpdate = () => {
     this.setState({forceUpdate: true});
@@ -63,7 +64,7 @@ export default class MonthList extends Component {
 
   getMonthHeight = (index) => {
     if (!this.monthHeights[index]) {
-      let {locale: {weekStartsOn}, months, rowHeight} = this.props;
+      let {locale: {weekStartsOn}, months, rowHeight, withTimes} = this.props;
       let {month, year} = months[index];
       let weeks = getWeeksInMonth(month, year, weekStartsOn, index === months.length - 1);
       let hasDaySelected = monthHasSelectedDay(
@@ -73,7 +74,7 @@ export default class MonthList extends Component {
         weekStartsOn
       );
       let height = weeks * rowHeight;
-      if (hasDaySelected) {
+      if (hasDaySelected && withTimes) {
         // @TODO make the height of the time row dynamic
         height = weeks * rowHeight + 71;
       }
@@ -156,6 +157,7 @@ export default class MonthList extends Component {
       showOverlay,
       theme,
       today,
+      withTimes
     } = this.props;
 
     let {month, year} = months[index];
@@ -181,6 +183,7 @@ export default class MonthList extends Component {
         style={style}
         locale={locale}
         passThrough={passThrough}
+        withTimes={withTimes}
         {...passThrough.Month}
       />
     );

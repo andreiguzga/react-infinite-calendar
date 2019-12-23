@@ -9,7 +9,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 import React, { PureComponent, Fragment } from 'react';
 import CSSTransition from "react-transition-group/CSSTransition";
 import classNames from 'classnames';
-import { getDateString } from '../utils';
+import { getDateString, weekHasSelectedDay } from '../utils';
 import format from 'date-fns/format';
 import getDay from 'date-fns/get_day';
 import isSameYear from 'date-fns/is_same_year';
@@ -51,7 +51,9 @@ var Month = function (_PureComponent) {
         selected = _props.selected,
         today = _props.today,
         theme = _props.theme,
-        passThrough = _props.passThrough;
+        passThrough = _props.passThrough,
+        withTimes = _props.withTimes;
+
 
     var currentYear = today.getFullYear();
     var year = monthDate.getFullYear();
@@ -71,6 +73,9 @@ var Month = function (_PureComponent) {
     var _minDate = format(minDate, 'YYYY-MM-DD');
     var _maxDate = format(maxDate, 'YYYY-MM-DD');
 
+    var selectedDayWeeks = weekHasSelectedDay(year, month, selected, locale.weekStartsOn);
+    passThrough.Month.onMonthLoaded(year, month, minDate, maxDate);
+
     // Oh the things we do in the name of performance...
     for (var i = 0, len = rows.length; i < len; i++) {
       var _classNames;
@@ -78,7 +83,6 @@ var Month = function (_PureComponent) {
       row = rows[i];
       days = [];
       dow = getDay(new Date(year, month, row[0]));
-      var hasSelectedDay = false;
 
       for (var k = 0, _len = row.length; k < _len; k++) {
         day = row[k];
@@ -87,10 +91,6 @@ var Month = function (_PureComponent) {
         isToday = date === _today;
 
         isDisabled = minDate && date < _minDate || maxDate && date > _maxDate || disabledDays && disabledDays.length && disabledDays.indexOf(dow) !== -1 || disabledDates && disabledDates.length && disabledDates.indexOf(date) !== -1;
-
-        if (hasSelectedDay === false) {
-          hasSelectedDay = date === selected ? true : false;
-        }
 
         days[k] = React.createElement(DayComponent, _extends({
           key: 'day-' + day,
@@ -109,6 +109,7 @@ var Month = function (_PureComponent) {
 
         dow += 1;
       }
+      var hasSelectedDay = selectedDayWeeks[i] !== undefined && selectedDayWeeks[i] === true ? true : false;
       monthRows[i] = React.createElement(
         Fragment,
         { key: 'month-row-fragment-' + i },
@@ -123,7 +124,7 @@ var Month = function (_PureComponent) {
           },
           days
         ),
-        React.createElement(
+        withTimes && React.createElement(
           CSSTransition,
           {
             key: 'select-time-transition',
@@ -131,7 +132,7 @@ var Month = function (_PureComponent) {
             timeout: { enter: 250, exit: 250 },
             'in': hasSelectedDay
           },
-          React.createElement(Time, { hasSelectedDay: hasSelectedDay })
+          React.createElement(Time, _extends({ hasSelectedDay: hasSelectedDay }, passThrough.Time))
         )
       );
     }

@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import VirtualList from 'react-tiny-virtual-list';
 import classNames from 'classnames';
-import { emptyFn, getMonth, getWeek, hasSelectedDay, getWeeksInMonth, animate } from '../utils';
+import { emptyFn, getMonth, getWeek, monthHasSelectedDay, getWeeksInMonth, animate } from "../utils";
 import parse from 'date-fns/parse';
 import startOfMonth from 'date-fns/start_of_month';
 import Month from '../Month';
@@ -60,15 +60,16 @@ var MonthList = function (_Component) {
         var _this$props = _this.props,
             weekStartsOn = _this$props.locale.weekStartsOn,
             months = _this$props.months,
-            rowHeight = _this$props.rowHeight;
+            rowHeight = _this$props.rowHeight,
+            withTimes = _this$props.withTimes;
         var _months$index = months[index],
             month = _months$index.month,
             year = _months$index.year;
 
         var weeks = getWeeksInMonth(month, year, weekStartsOn, index === months.length - 1);
-        var isDaySelected = hasSelectedDay(year, month, _this.props.selected, weekStartsOn);
+        var hasDaySelected = monthHasSelectedDay(year, month, _this.props.selected, weekStartsOn);
         var height = weeks * rowHeight;
-        if (isDaySelected) {
+        if (hasDaySelected && withTimes) {
           // @TODO make the height of the time row dynamic
           height = weeks * rowHeight + 71;
         }
@@ -134,7 +135,8 @@ var MonthList = function (_Component) {
           selected = _this$props2.selected,
           showOverlay = _this$props2.showOverlay,
           theme = _this$props2.theme,
-          today = _this$props2.today;
+          today = _this$props2.today,
+          withTimes = _this$props2.withTimes;
       var _months$index2 = months[index],
           month = _months$index2.month,
           year = _months$index2.year;
@@ -162,7 +164,8 @@ var MonthList = function (_Component) {
         theme: theme,
         style: style,
         locale: locale,
-        passThrough: passThrough
+        passThrough: passThrough,
+        withTimes: withTimes
       }, passThrough.Month));
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
@@ -257,5 +260,6 @@ MonthList.propTypes = process.env.NODE_ENV !== "production" ? {
   showOverlay: PropTypes.bool,
   theme: PropTypes.object,
   today: PropTypes.instanceOf(Date),
-  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  withTimes: PropTypes.bool
 } : {};

@@ -25,7 +25,9 @@ export default class Month extends PureComponent {
       today,
       theme,
       passThrough,
+      withTimes
     } = this.props;
+
     const currentYear = today.getFullYear();
     const year = monthDate.getFullYear();
     const month = monthDate.getMonth();
@@ -42,8 +44,7 @@ export default class Month extends PureComponent {
     const _maxDate = format(maxDate, 'YYYY-MM-DD');
 
     const selectedDayWeeks = weekHasSelectedDay(year, month, selected, locale.weekStartsOn);
-    console.log(year, month, selected);
-    console.log(selectedDayWeeks);
+    passThrough.Month.onMonthLoaded(year, month, minDate, maxDate);
 
 		// Oh the things we do in the name of performance...
     for (let i = 0, len = rows.length; i < len; i++) {
@@ -98,14 +99,16 @@ export default class Month extends PureComponent {
           >
             {days}
           </ul>
-          <CSSTransition
-            key={`select-time-transition`}
-            classNames={{ ...animation }}
-            timeout={{ enter: 250, exit: 250 }}
-            in={hasSelectedDay}
-          >
-            <Time hasSelectedDay={hasSelectedDay} />
-          </CSSTransition>
+          {withTimes && 
+            <CSSTransition
+              key={`select-time-transition`}
+              classNames={{ ...animation }}
+              timeout={{ enter: 250, exit: 250 }}
+              in={hasSelectedDay}
+            >
+              <Time hasSelectedDay={hasSelectedDay} {...passThrough.Time}/>
+            </CSSTransition>
+          }
         </Fragment>
       );
 
