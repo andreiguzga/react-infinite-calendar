@@ -95,7 +95,7 @@ export default class Calendar extends Component {
     onScroll: PropTypes.func,
     onScrollEnd: PropTypes.func,
     onSelect: PropTypes.func,
-    onMonthLoad: PropTypes.func,
+    onMonthLoaded: PropTypes.func,
     withTimes: PropTypes.bool,
     availableTimes: PropTypes.arrayOf(PropTypes.string),
     rowHeight: PropTypes.number,

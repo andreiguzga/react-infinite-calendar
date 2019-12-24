@@ -4,6 +4,7 @@
   "description": "Infinite scrolling date-picker built with React, with localization, themes, keyboard support, and more.",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "types": "types/index.d.ts",
   "files": [
     "css",
     "es",
@@ -34,7 +35,14 @@
     "react": "^15.3.0 || ^16.0.0-alpha"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/addon-links": "^5.2.8",
+    "@storybook/addon-options": "^5.2.8",
+    "@storybook/react": "^5.2.8",
+    "@types/react-transition-group": "^4.2.3",
     "babel-eslint": "^7.0.0",
+    "babel-loader": "^8.0.6",
     "babel-plugin-css-modules-transform": "^1.2.1",
     "eslint": "^3.8.1",
     "eslint-config-react-app": "^0.5.1",
@@ -47,10 +55,7 @@
     "nwb-sass": "^0.9.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "@kadira/storybook": "^2.35.3",
-    "@kadira/storybook-addon-options": "^1.0.1",
-    "webpack": "^4.41.2",
-    "@types/react-transition-group": "^4.2.3"
+    "webpack": "^4.41.2"
   },
   "author": {
     "name": "Clauderic Demers",
